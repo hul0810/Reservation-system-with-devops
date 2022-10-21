@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vue-test
+  namespace: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vue-test
+  template:
+    metadata:
+      name: vue-test
+      labels:
+        app: vue-test
+    spec:
+      containers:
+      - name: vue-frontend
+        image: priv.images.io:30000/front:test
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80

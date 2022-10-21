@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vue-production
+  namespace: product
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vue-production
+  template:
+    metadata:
+      name: vue-production
+      labels:
+        app: vue-production
+    spec:
+      containers:
+      - name: vue-frontend
+        image: priv.images.io:30000/fastapi:${VERSION}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 200m
