@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-test
+  namespace: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi-test
+  template:
+    metadata:
+      name: fastapi-test
+      labels:
+        app: fastapi-test
+    spec:
+      containers:
+      - name: fastapi-backend
+        image: priv.images.io:30000/fastapi:test
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
