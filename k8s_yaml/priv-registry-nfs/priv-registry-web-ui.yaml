@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: priv-registry-web-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: priv-registry-web-ui
+  template:
+    metadata:
+      labels:
+        app: priv-registry-web-ui
+    spec:
+      containers:
+      - name: priv-registry-web-ui
+        image: hyper/docker-registry-web
+        ports:
+        - containerPort: 8080
+        env:
+        - name: REGISTRY_URL
+          value: http://priv-registry-svc:5000/v2
+        - name: REGISTRY_NAME
+          value: priv-registry-svc:5000
+        - name: REGISTRY_READONLY
+          value: "false"
+
