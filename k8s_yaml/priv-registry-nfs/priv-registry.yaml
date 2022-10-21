@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: priv-registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: priv-registry
+  template:
+    metadata:
+      labels:
+        app: priv-registry
+    spec:
+      containers:
+      - name: priv-registry
+        image: registry:latest
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+        - name: nfs-volume
+          mountPath: /var/lib/registry
+        env:
+        - name: REGISTRY_STORAGE_DELETE_ENABLED
+          value: "true"
+      volumes:
+      - name: nfs-volume
+        persistentVolumeClaim:
+          claimName: nfs-registry-pvc
+      nodeName: un-kube-worker1
