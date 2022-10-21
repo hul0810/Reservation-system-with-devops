@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: facility_backend
+    image: fastapi_backend:0.0
+    command: bash -c "uvicorn main:app --host 0.0.0.0 --reload"
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - 8001:8000
+    restart: always

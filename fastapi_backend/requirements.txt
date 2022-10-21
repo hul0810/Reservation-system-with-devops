@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+SQLAlchemy
+pydantic
+psycopg2
+pydantic[email]
+python-jose
+passlib
+python-multipart

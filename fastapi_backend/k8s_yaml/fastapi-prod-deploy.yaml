@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-production
+  namespace: product
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi-production
+  template:
+    metadata:
+      name: fastapi-production
+      labels:
+        app: fastapi-production
+    spec:
+      containers:
+      - name: fastapi-backend
+        image: priv.images.io:30000/fastapi:${VERSION}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: imagefile
+          mountPath: /app/image
+      volumes:
+      - name: imagefile
+        persistentVolumeClaim:
+          claimName: nfs-imagefile-pvc
