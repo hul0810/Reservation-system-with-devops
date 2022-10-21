@@ -1,0 +1,54 @@
+variables:
+  DEPLOYMENT_NAME: fastapi-production
+
+stages:
+  - build
+  - test
+  - push
+  - deploy
+
+docker_build:
+  stage: build
+  before_script:
+    - echo "backend dockerfile build..."
+  script:
+    - docker -H 192.168.16.28 build -t fastapi:test .
+    - docker -H 192.168.16.28 images | grep fastapi
+
+docker_test:
+  stage: test
+  before_script:
+    - echo "backend dockerfile test..."
+  script:
+    - docker -H 192.168.16.28 run --name fastapi-test -d -p 8888:8000 fastapi:test
+    - docker -H 192.168.16.28 ps | grep fastapi-test
+    - docker -H 192.168.16.28 rm -f fastapi-test
+
+docker_push:
+  stage: push
+  before_script:
+    - echo "private regisry push..."
+  script:
+    - docker -H 192.168.16.28 tag fastapi:test priv.images.io:30000/fastapi:test
+    - docker -H 192.168.16.28 push priv.images.io:30000/fastapi:test
+
+k8s_test_deploy:
+  stage: deploy
+  before_script:
+    - echo "k8s deploy test ..."
+  script:
+    - kubectl delete -f ./k8s_yaml/fastapi-deploy.yaml || true
+    - kubectl apply -f ./k8s_yaml/fastapi-deploy.yaml
+    - kubectl apply -f ./k8s_yaml/fastapi-deploy-svc.yaml
+
+k8s_prod_deploy:
+  stage: deploy
+  rules:
+    - when: manual
+  before_script:
+    - echo "k8s deploy production ..."
+  script:
+    - docker -H 192.168.16.28 tag fastapi:test priv.images.io:30000/fastapi:${VERSION}
+    - docker -H 192.168.16.28 push priv.images.io:30000/fastapi:${VERSION}
+    - kubectl set image deploy ${DEPLOYMENT_NAME} fastapi-backend=priv.images.io:30000/fastapi:${VERSION} -n product --record=true
+    - kubectl apply -f ./k8s_yaml/fastapi-deploy-svc.yaml
