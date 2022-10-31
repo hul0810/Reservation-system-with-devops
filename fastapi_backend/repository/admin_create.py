@@ -11,7 +11,7 @@ def admin_create():
         uid = 0,
         password = hashing_pw,
         email = "admin@admin.com",
-        phonenumber = "01046101594",
+        phonenumber = "01012345678",
         department = "관리자",
         grade = "관리자",
         auth = "0"
